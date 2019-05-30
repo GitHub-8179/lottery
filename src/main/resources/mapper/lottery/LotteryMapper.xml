@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjc.lottery.lottery.dao.LotteryMapper">
+  <resultMap id="BaseResultMap" type="com.sjc.lottery.lottery.entity.Lottery">
+    <result column="LOTTERY_ID" jdbcType="INTEGER" property="lotteryId" />
+    <result column="LOTTERY_PERIOD" jdbcType="CHAR" property="lotteryPeriod" />
+    <result column="WEEK" jdbcType="VARCHAR" property="week" />
+    <result column="LOTTERY_TYPE" jdbcType="TINYINT" property="lotteryType" />
+    <result column="PERIOD_DATE" jdbcType="CHAR" property="periodDate" />
+    <result column="RED_BALL1" jdbcType="VARCHAR" property="redBall1" />
+    <result column="RED_BALL2" jdbcType="VARCHAR" property="redBall2" />
+    <result column="RED_BALL3" jdbcType="VARCHAR" property="redBall3" />
+    <result column="RED_BALL4" jdbcType="VARCHAR" property="redBall4" />
+    <result column="RED_BALL5" jdbcType="VARCHAR" property="redBall5" />
+    <result column="RED_BALL6" jdbcType="VARCHAR" property="redBall6" />
+    <result column="RED_BALL7" jdbcType="VARCHAR" property="redBall7" />
+    <result column="BLUE_BALL" jdbcType="VARCHAR" property="blueBall" />
+    <result column="NOW_PERIOD_MONEY" jdbcType="INTEGER" property="nowPeriodMoney" />
+    <result column="NEXT_PERIOD_MONEY" jdbcType="INTEGER" property="nextPeriodMoney" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    LOTTERY_ID, LOTTERY_PERIOD, LOTTERY_TYPE, PERIOD_DATE, RED_BALL1, RED_BALL2, RED_BALL3,
+    RED_BALL4, RED_BALL5, RED_BALL6, RED_BALL7, BLUE_BALL, NOW_PERIOD_MONEY, NEXT_PERIOD_MONEY,
+    content,DATE_FORMAT(period_date,'%w') week
+  </sql>
+  <select id="selectByExample" parameterType="com.sjc.lottery.lottery.entity.LotteryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from p_lottery
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <select id="selBallInfo" parameterType="com.sjc.lottery.lottery.entity.LotteryExample" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from p_lottery
+    <where>
+      <if test="lotteryId != null">
+        and LOTTERY_ID = #{lotteryId,jdbcType=INTEGER}
+      </if>
+      <if test="lotteryPeriod != null">
+        and LOTTERY_PERIOD =#{lotteryPeriod,jdbcType=CHAR}
+      </if>
+      <if test="lotteryType != null">
+        and LOTTERY_TYPE = #{lotteryType,jdbcType=TINYINT}
+      </if>
+      <if test="periodDate != null">
+        and PERIOD_DATE =  #{periodDate,jdbcType=CHAR}
+      </if>
+    </where>
+
+      order by LOTTERY_PERIOD desc
+  </select>
+
+  <insert id="insert" parameterType="com.sjc.lottery.lottery.entity.Lottery" useGeneratedKeys="true" keyProperty="lotteryId">
+    insert into p_lottery (LOTTERY_ID, LOTTERY_PERIOD, LOTTERY_TYPE,
+      PERIOD_DATE, RED_BALL1, RED_BALL2,
+      RED_BALL3, RED_BALL4, RED_BALL5,
+      RED_BALL6, RED_BALL7, BLUE_BALL,
+      NOW_PERIOD_MONEY, NEXT_PERIOD_MONEY, content
+      )
+    values ( #{lotteryId,jdbcType=INTEGER},#{lotteryPeriod,jdbcType=CHAR}, #{lotteryType,jdbcType=TINYINT},
+      #{periodDate,jdbcType=CHAR}, #{redBall1,jdbcType=VARCHAR}, #{redBall2,jdbcType=VARCHAR},
+      #{redBall3,jdbcType=VARCHAR}, #{redBall4,jdbcType=VARCHAR}, #{redBall5,jdbcType=VARCHAR},
+      #{redBall6,jdbcType=VARCHAR}, #{redBall7,jdbcType=VARCHAR}, #{blueBall,jdbcType=VARCHAR},
+      #{nowPeriodMoney,jdbcType=INTEGER}, #{nextPeriodMoney,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sjc.lottery.lottery.entity.Lottery">
+    insert into p_lottery
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="lotteryId != null">
+        LOTTERY_ID,
+      </if>
+      <if test="lotteryPeriod != null">
+        LOTTERY_PERIOD,
+      </if>
+      <if test="lotteryType != null">
+        LOTTERY_TYPE,
+      </if>
+      <if test="periodDate != null">
+        PERIOD_DATE,
+      </if>
+      <if test="redBall1 != null">
+        RED_BALL1,
+      </if>
+      <if test="redBall2 != null">
+        RED_BALL2,
+      </if>
+      <if test="redBall3 != null">
+        RED_BALL3,
+      </if>
+      <if test="redBall4 != null">
+        RED_BALL4,
+      </if>
+      <if test="redBall5 != null">
+        RED_BALL5,
+      </if>
+      <if test="redBall6 != null">
+        RED_BALL6,
+      </if>
+      <if test="redBall7 != null">
+        RED_BALL7,
+      </if>
+      <if test="blueBall != null">
+        BLUE_BALL,
+      </if>
+      <if test="nowPeriodMoney != null">
+        NOW_PERIOD_MONEY,
+      </if>
+      <if test="nextPeriodMoney != null">
+        NEXT_PERIOD_MONEY,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="lotteryId != null">
+        #{lotteryId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryPeriod != null">
+        #{lotteryPeriod,jdbcType=CHAR},
+      </if>
+      <if test="lotteryType != null">
+        #{lotteryType,jdbcType=TINYINT},
+      </if>
+      <if test="periodDate != null">
+        #{periodDate,jdbcType=CHAR},
+      </if>
+      <if test="redBall1 != null">
+        #{redBall1,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall2 != null">
+        #{redBall2,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall3 != null">
+        #{redBall3,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall4 != null">
+        #{redBall4,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall5 != null">
+        #{redBall5,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall6 != null">
+        #{redBall6,jdbcType=VARCHAR},
+      </if>
+      <if test="redBall7 != null">
+        #{redBall7,jdbcType=VARCHAR},
+      </if>
+      <if test="blueBall != null">
+        #{blueBall,jdbcType=VARCHAR},
+      </if>
+      <if test="nowPeriodMoney != null">
+        #{nowPeriodMoney,jdbcType=INTEGER},
+      </if>
+      <if test="nextPeriodMoney != null">
+        #{nextPeriodMoney,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByExampleSelective" parameterType="map">
+    update p_lottery
+    <set>
+      <if test="record.lotteryId != null">
+        LOTTERY_ID = #{record.lotteryId,jdbcType=INTEGER},
+      </if>
+      <if test="record.lotteryPeriod != null">
+        LOTTERY_PERIOD = #{record.lotteryPeriod,jdbcType=CHAR},
+      </if>
+      <if test="record.lotteryType != null">
+        LOTTERY_TYPE = #{record.lotteryType,jdbcType=TINYINT},
+      </if>
+      <if test="record.periodDate != null">
+        PERIOD_DATE = #{record.periodDate,jdbcType=CHAR},
+      </if>
+      <if test="record.redBall1 != null">
+        RED_BALL1 = #{record.redBall1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall2 != null">
+        RED_BALL2 = #{record.redBall2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall3 != null">
+        RED_BALL3 = #{record.redBall3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall4 != null">
+        RED_BALL4 = #{record.redBall4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall5 != null">
+        RED_BALL5 = #{record.redBall5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall6 != null">
+        RED_BALL6 = #{record.redBall6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redBall7 != null">
+        RED_BALL7 = #{record.redBall7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.blueBall != null">
+        BLUE_BALL = #{record.blueBall,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nowPeriodMoney != null">
+        NOW_PERIOD_MONEY = #{record.nowPeriodMoney,jdbcType=INTEGER},
+      </if>
+      <if test="record.nextPeriodMoney != null">
+        NEXT_PERIOD_MONEY = #{record.nextPeriodMoney,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update p_lottery
+    set LOTTERY_ID = #{record.lotteryId,jdbcType=INTEGER},
+      LOTTERY_PERIOD = #{record.lotteryPeriod,jdbcType=CHAR},
+      LOTTERY_TYPE = #{record.lotteryType,jdbcType=TINYINT},
+      PERIOD_DATE = #{record.periodDate,jdbcType=CHAR},
+      RED_BALL1 = #{record.redBall1,jdbcType=VARCHAR},
+      RED_BALL2 = #{record.redBall2,jdbcType=VARCHAR},
+      RED_BALL3 = #{record.redBall3,jdbcType=VARCHAR},
+      RED_BALL4 = #{record.redBall4,jdbcType=VARCHAR},
+      RED_BALL5 = #{record.redBall5,jdbcType=VARCHAR},
+      RED_BALL6 = #{record.redBall6,jdbcType=VARCHAR},
+      RED_BALL7 = #{record.redBall7,jdbcType=VARCHAR},
+      BLUE_BALL = #{record.blueBall,jdbcType=VARCHAR},
+      NOW_PERIOD_MONEY = #{record.nowPeriodMoney,jdbcType=INTEGER},
+      NEXT_PERIOD_MONEY = #{record.nextPeriodMoney,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
